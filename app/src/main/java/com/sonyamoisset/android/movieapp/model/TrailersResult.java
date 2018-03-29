@@ -4,17 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MoviesResult {
+public class TrailersResult {
 
     @SerializedName("results")
-    private final List<Movie> results;
+    private final List<Trailer> results;
 
-    public MoviesResult(List<Movie> results) {
+    public TrailersResult(List<Trailer> results) {
         this.results = results;
     }
 
-    public List<Movie> getListOfMovies() {
+    public List<Trailer> getListOfTrailers() {
         return results;
     }
-
 }

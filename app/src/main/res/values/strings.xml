@@ -12,10 +12,20 @@
     <string name="activity_detail_release_date">Release Date</string>
     <string name="activity_detail_rating">Rating</string>
     <string name="activity_detail_synopsis">Synopsis</string>
+    <string name="activity_detail_trailer">Trailers</string>
+    <string name="activity_detail_review">Reviews</string>
 
+    <string name="main_activity_sortBy_favorites_movies">favorites_movies</string>
     <string name="main_activity_sortBy_popular_movies">popular_movies</string>
     <string name="main_activity_sortBy_top_rated_movies">top_rated_movies</string>
 
     <string name="message_obtain_api_key">Please obtain your API key from TheMovieDB website</string>
     <string name="message_no_connectivity">There is no connectivity. Please turn on your WI-FI</string>
+
+    <string name="youtube_web_intent">https://www.youtube.com/watch?v=</string>
+    <string name="youtube_app_intent">vnd.youtube:</string>
+
+    <string name="TRAILER_ID_KEY">trailer</string>
+    <string name="MOVIE_KEY">movie</string>
+    <string name="no_movies_liked">No movies liked</string>
 </resources>

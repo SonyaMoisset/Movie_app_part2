@@ -2,7 +2,6 @@ package com.sonyamoisset.android.movieapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +32,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         private MovieViewHolder(View view) {
             super(view);
+
             moviePoster = view.findViewById(R.id.movie_poster);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -42,23 +42,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
                     if (position != RecyclerView.NO_POSITION) {
 
+                        Movie movie = movieList.get(position);
                         Intent intent = new Intent(context, DetailActivity.class);
-                        Bundle extras = new Bundle();
-
-                        extras.putString(Constants.MOVIE_ORIGINAL_TITLE_KEY,
-                                movieList.get(position).getOriginalTitle());
-                        extras.putString(Constants.MOVIE_POSTER_PATH_KEY,
-                                movieList.get(position).getPosterPath());
-                        extras.putString(Constants.MOVIE_POSTER_BACKDROP_PATH_KEY,
-                                movieList.get(position).getBackdropPath());
-                        extras.putString(Constants.MOVIE_OVERVIEW_KEY,
-                                movieList.get(position).getOverview());
-                        extras.putString(Constants.MOVIE_VOTE_AVERAGE_KEY,
-                                Double.toString(movieList.get(position).getVoteAverage()));
-                        extras.putString(Constants.MOVIE_RELEASE_DATE_KEY,
-                                movieList.get(position).getReleaseDate());
-
-                        intent.putExtras(extras);
+                        intent.putExtra(context.getString(R.string.MOVIE_KEY), movie);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                         context.startActivity(intent);
