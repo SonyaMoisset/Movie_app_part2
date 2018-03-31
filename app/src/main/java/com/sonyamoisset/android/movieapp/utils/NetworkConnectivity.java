@@ -4,20 +4,18 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.sonyamoisset.android.movieapp.MainActivity;
+import com.sonyamoisset.android.movieapp.ui.activity.MainActivity;
 
 public class NetworkConnectivity {
-
     public static boolean isConnected(MainActivity mainActivity) {
-
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo netInfo = null;
+        NetworkInfo networkInfo = null;
         if (connectivityManager != null) {
-            netInfo = connectivityManager.getActiveNetworkInfo();
+            networkInfo = connectivityManager.getActiveNetworkInfo();
         }
 
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 }

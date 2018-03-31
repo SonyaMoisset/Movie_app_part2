@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 public class Trailer implements Parcelable {
-
     @SerializedName("key")
     private final String key;
     @SerializedName("name")
@@ -21,7 +20,6 @@ public class Trailer implements Parcelable {
     }
 
     public static final Parcelable.Creator<Trailer> CREATOR = new Parcelable.Creator<Trailer>() {
-
         @Override
         public Trailer createFromParcel(Parcel in) {
             return new Trailer(in);

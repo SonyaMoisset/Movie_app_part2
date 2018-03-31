@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 public class Review implements Parcelable {
-
     @SerializedName("author")
     private final String author;
     @SerializedName("content")
@@ -21,7 +20,6 @@ public class Review implements Parcelable {
     }
 
     public static final Parcelable.Creator<Review> CREATOR = new Parcelable.Creator<Review>() {
-
         @Override
         public Review createFromParcel(Parcel in) {
             return new Review(in);

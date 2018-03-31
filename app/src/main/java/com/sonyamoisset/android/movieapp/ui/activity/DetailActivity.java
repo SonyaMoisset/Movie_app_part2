@@ -1,4 +1,4 @@
-package com.sonyamoisset.android.movieapp;
+package com.sonyamoisset.android.movieapp.ui.activity;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sonyamoisset.android.movieapp.BuildConfig;
+import com.sonyamoisset.android.movieapp.R;
 import com.sonyamoisset.android.movieapp.adapter.ReviewsAdapter;
 import com.sonyamoisset.android.movieapp.adapter.TrailersAdapter;
 import com.sonyamoisset.android.movieapp.api.MoviesApiClient;
@@ -40,7 +42,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity {
-
     @BindView(R.id.movie_poster)
     ImageView moviePoster;
     @BindView(R.id.movie_backdrop_path)
@@ -59,7 +60,7 @@ public class DetailActivity extends AppCompatActivity {
     public RecyclerView trailerRecyclerView;
     public RecyclerView reviewRecyclerView;
     Movie movie;
-    List<String> movies = new ArrayList<>();
+    Cursor cursor;
     private int movie_id;
 
     @Override
@@ -73,7 +74,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateMovieDetailUI() {
-
         movie = getIntent().getParcelableExtra(getString(R.string.MOVIE_KEY));
         movie_id = movie.getId();
 
@@ -103,11 +103,12 @@ public class DetailActivity extends AppCompatActivity {
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkFavorites(movie_id)) {
+                if (checkFavorites()) {
                     deleteFromFavorites();
                 } else {
                     addToFavorites();
                 }
+                cursor.close();
             }
         });
 
@@ -116,7 +117,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void addToFavorites() {
-
         Uri uri = MovieContract.MovieEntry.CONTENT_URI;
         ContentResolver resolver = this.getContentResolver();
         ContentValues values = new ContentValues();
@@ -136,7 +136,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void deleteFromFavorites() {
-
         Uri uri = MovieContract.MovieEntry.CONTENT_URI;
         ContentResolver resolver = this.getContentResolver();
         String selection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
@@ -145,39 +144,19 @@ public class DetailActivity extends AppCompatActivity {
         resolver.delete(uri, selection, selectionArgs);
 
         Toast.makeText(getApplicationContext(), "Movie removed from favorites", Toast.LENGTH_SHORT).show();
-
     }
 
-    private boolean checkFavorites(Integer movieID) {
+    private boolean checkFavorites() {
+        cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                new String[]{String.valueOf(movie_id)},
+                null);
 
-        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        assert cursor != null;
-
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            String id = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
-            movies.add(id);
-        }
-
-        if (cursor.moveToFirst()) {
-            if (movies.contains(movieID)) {
-                cursor.close();
-                return true;
-            }
-        }
-
-        cursor.close();
-        return false;
+        return (cursor != null) && (cursor.getCount() > 0);
     }
 
     private void initMovieDetailTrailersView() {
-
         List<Trailer> trailerList = new ArrayList<>();
         TrailersAdapter trailersAdapter = new TrailersAdapter(this, trailerList);
         trailerRecyclerView = findViewById(R.id.trailerRecyclerView);
@@ -192,7 +171,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void initMovieDetailReviewsView() {
-
         List<Review> reviewList = new ArrayList<>();
         ReviewsAdapter reviewsAdapter = new ReviewsAdapter(reviewList);
         reviewRecyclerView = findViewById(R.id.reviewRecyclerView);
@@ -207,7 +185,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void getMovieDetailTrailers() {
-
         try {
             MoviesApiInterface moviesApiInterface =
                     MoviesApiClient.getClient().create(MoviesApiInterface.class);
@@ -240,7 +217,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void getMovieDetailReviews() {
-
         try {
             MoviesApiInterface moviesApiInterface =
                     MoviesApiClient.getClient().create(MoviesApiInterface.class);

@@ -6,21 +6,20 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 public class Movie implements Parcelable {
-
     @SerializedName("id")
-    private final Integer id;
+    private Integer id;
     @SerializedName("poster_path")
-    private final String posterPath;
+    private String posterPath;
     @SerializedName("overview")
-    private final String overview;
+    private String overview;
     @SerializedName("release_date")
-    private final String releaseDate;
+    private String releaseDate;
     @SerializedName("original_title")
-    private final String originalTitle;
+    private String originalTitle;
     @SerializedName("backdrop_path")
-    private final String backdropPath;
+    private String backdropPath;
     @SerializedName("vote_average")
-    private final Double voteAverage;
+    private Double voteAverage;
 
     public Movie(Integer id, String posterPath, String overview, String releaseDate,
                  String originalTitle, String backdropPath, Double voteAverage) {
@@ -73,7 +72,7 @@ public class Movie implements Parcelable {
         }
     };
 
-    public Movie(Parcel in) {
+    private Movie(Parcel in) {
         id = in.readInt();
         posterPath = in.readString();
         overview = in.readString();

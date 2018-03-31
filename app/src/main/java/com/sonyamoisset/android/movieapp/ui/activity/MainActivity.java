@@ -1,4 +1,4 @@
-package com.sonyamoisset.android.movieapp;
+package com.sonyamoisset.android.movieapp.ui.activity;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -15,14 +15,16 @@ import android.view.MenuItem;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Toast;
 
+import com.sonyamoisset.android.movieapp.R;
 import com.sonyamoisset.android.movieapp.adapter.MoviesAdapter;
 import com.sonyamoisset.android.movieapp.api.MoviesApiClient;
 import com.sonyamoisset.android.movieapp.api.MoviesApiInterface;
 import com.sonyamoisset.android.movieapp.api.MoviesApiParams;
 import com.sonyamoisset.android.movieapp.data.MovieContract;
-import com.sonyamoisset.android.movieapp.fragment.FavoriteMoviesFragment;
-import com.sonyamoisset.android.movieapp.fragment.PopularMoviesFragment;
-import com.sonyamoisset.android.movieapp.fragment.TopRatedMoviesFragment;
+import com.sonyamoisset.android.movieapp.data.MovieDbHelper;
+import com.sonyamoisset.android.movieapp.ui.fragment.FavoriteMoviesFragment;
+import com.sonyamoisset.android.movieapp.ui.fragment.PopularMoviesFragment;
+import com.sonyamoisset.android.movieapp.ui.fragment.TopRatedMoviesFragment;
 import com.sonyamoisset.android.movieapp.model.Movie;
 import com.sonyamoisset.android.movieapp.model.MoviesResult;
 
@@ -37,9 +39,14 @@ import retrofit2.Response;
 import static com.sonyamoisset.android.movieapp.utils.NetworkConnectivity.isConnected;
 
 public class MainActivity extends AppCompatActivity {
-
     private RecyclerView recyclerView;
-    List<Movie> movieList = new ArrayList<>();
+    private MovieDbHelper movieDbHelper;
+    private MoviesAdapter moviesAdapter;
+
+    Context context = this;
+    List movieList = new ArrayList<>();
+    Movie movie;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +98,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private void initMoviesGridView() {
-
         recyclerView = findViewById(R.id.recyclerView);
 
-        Context context = this;
-        MoviesAdapter moviesAdapter = new MoviesAdapter(this, movieList);
+        moviesAdapter = new MoviesAdapter(this, movieList);
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -109,46 +115,6 @@ public class MainActivity extends AppCompatActivity {
         moviesAdapter.notifyDataSetChanged();
 
         getMovies(getString(R.string.main_activity_sortBy_popular_movies));
-    }
-
-    private void showFavorites() {
-
-        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        if (cursor != null) {
-            if (!cursor.moveToNext()) {
-                Toast.makeText(this, getResources().getText(R.string.no_movies_liked), Toast.LENGTH_SHORT).show();
-
-            } else {
-                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                    Movie movie = new Movie(
-                            cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ORIGINAL_TITLE)),
-                            cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH)),
-                            cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE))
-                    );
-
-                    if (movieList != null) {
-                        movieList.add(movie);
-                    }
-                    recyclerView.setAdapter(
-                            new MoviesAdapter(getApplicationContext(), movieList));
-                    recyclerView.smoothScrollToPosition(0);
-                }
-            }
-        }
-        if (cursor != null) {
-            cursor.close();
-        }
     }
 
     private void getMovies(String sortBy) {
@@ -167,16 +133,21 @@ public class MainActivity extends AppCompatActivity {
                         moviesApiInterface.getTopRatedMovies(MoviesApiParams.API_KEY);
             }
             if (Objects.equals(sortBy, getString(R.string.main_activity_sortBy_favorites_movies))) {
-                showFavorites();
+                initFavoriteView();
             }
 
             if (moviesResponse != null) {
                 moviesResponse.enqueue(new Callback<MoviesResult>() {
 
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void onResponse(@NonNull Call<MoviesResult> call,
                                            @NonNull Response<MoviesResult> response) {
-                        movieList = response.body().getListOfMovies();
+                        MoviesResult moviesResult = response.body();
+                        if (moviesResult != null && moviesResult.getListOfMovies() != null) {
+                            movieList = moviesResult.getListOfMovies();
+                        }
+
                         recyclerView.setAdapter(
                                 new MoviesAdapter(getApplicationContext(), movieList));
                         recyclerView.smoothScrollToPosition(0);
@@ -194,5 +165,67 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private void initFavoriteView() {
+        recyclerView = findViewById(R.id.recyclerView);
+        moviesAdapter = new MoviesAdapter(this, movieList);
 
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        }
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(moviesAdapter);
+        moviesAdapter.notifyDataSetChanged();
+        movieDbHelper = new MovieDbHelper(MainActivity.this);
+
+        movieList.clear();
+        showAllFavorites();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void showAllFavorites() {
+        String[] projection = {
+                MovieContract.MovieEntry._ID,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+                MovieContract.MovieEntry.COLUMN_MOVIE_ORIGINAL_TITLE,
+                MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW,
+                MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
+                MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH,
+                MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE,
+                MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH
+        };
+
+        String sortOrder =
+                MovieContract.MovieEntry._ID + " ASC";
+
+        cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                sortOrder);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                movie = new Movie(
+                        cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ORIGINAL_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH)),
+                        cursor.getDouble(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE))
+                );
+
+                movieList.add(movie);
+            } while (cursor.moveToNext());
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+        movieDbHelper.close();
+    }
 }

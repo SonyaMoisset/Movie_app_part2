@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.sonyamoisset.android.movieapp.DetailActivity;
+import com.sonyamoisset.android.movieapp.ui.activity.DetailActivity;
 import com.sonyamoisset.android.movieapp.R;
 import com.sonyamoisset.android.movieapp.model.Movie;
 import com.sonyamoisset.android.movieapp.utils.Constants;
@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
-
     private final Context context;
     private final List<Movie> movieList;
 
@@ -27,12 +26,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
-
         private final ImageView moviePoster;
 
         private MovieViewHolder(View view) {
             super(view);
-
             moviePoster = view.findViewById(R.id.movie_poster);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -41,8 +38,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
                     int position = getAdapterPosition();
 
                     if (position != RecyclerView.NO_POSITION) {
-
                         Movie movie = movieList.get(position);
+
                         Intent intent = new Intent(context, DetailActivity.class);
                         intent.putExtra(context.getString(R.string.MOVIE_KEY), movie);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -56,9 +53,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public MoviesAdapter.MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
-
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.movie_list_items, viewGroup, false);
+
         return new MovieViewHolder(view);
     }
 

@@ -12,8 +12,6 @@ import com.sonyamoisset.android.movieapp.model.Review;
 import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder> {
-
-
     private final List<Review> reviewList;
 
     public ReviewsAdapter(List<Review> reviewList) {
@@ -21,13 +19,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
-
         private final TextView movieReviewAuthor;
         private final TextView movieReviewContent;
 
         private ReviewViewHolder(View view) {
             super(view);
-
             movieReviewAuthor = view.findViewById(R.id.movie_review_author);
             movieReviewContent = view.findViewById(R.id.movie_review_content);
         }
@@ -35,9 +31,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
     @Override
     public ReviewsAdapter.ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
-
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.review_list_items, viewGroup, false);
+
         return new ReviewViewHolder(view);
     }
 

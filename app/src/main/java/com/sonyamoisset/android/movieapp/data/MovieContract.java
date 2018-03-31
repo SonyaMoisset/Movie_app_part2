@@ -6,8 +6,11 @@ import android.provider.BaseColumns;
 public class MovieContract {
 
     public static final String CONTENT_AUTHORITY = "com.sonyamoisset.android.movieapp";
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_MOVIE = "movies";
+
+    private MovieContract() {
+    }
 
     public static final class MovieEntry implements BaseColumns {
 
@@ -16,7 +19,7 @@ public class MovieContract {
                         .appendPath(PATH_MOVIE)
                         .build();
 
-        public static final String TABLE_NAME = "movies";
+        public static final String TABLE_NAME = "favorites";
 
         public static final String COLUMN_MOVIE_ID = "id";
         public static final String COLUMN_MOVIE_ORIGINAL_TITLE = "original_title";
