@@ -102,7 +102,11 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_toEndOf="@+id/movie_poster"
-                android:text="Favorite"/>
+                android:background="@color/colorSecondaryLight"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/activity_detail_favorite"
+                android:textColor="@color/colorPrimaryLight"/>
         </RelativeLayout>
 
         <TextView
@@ -132,6 +136,7 @@
             style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/activity_detail_trailer"
@@ -151,6 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="8dp"
             android:text="@string/activity_detail_review"
             android:textAllCaps="true"
             android:textColor="@color/colorSecondaryLight"

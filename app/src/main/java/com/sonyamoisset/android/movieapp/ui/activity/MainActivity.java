@@ -40,30 +40,30 @@ import static com.sonyamoisset.android.movieapp.utils.NetworkConnectivity.isConn
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private MovieDbHelper movieDbHelper;
     private MoviesAdapter moviesAdapter;
+    private MovieDbHelper movieDbHelper;
+    private BottomNavigationView bottomNavigationView;
 
-    Context context = this;
-    List movieList = new ArrayList<>();
-    Movie movie;
-    Cursor cursor;
+    private Context context = this;
+    private List movieList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        bottomNavigationView = findViewById(R.id.navigation);
+
         if (isConnected(this)) {
             initMoviesGridView();
             createBottomNavigationView();
         } else {
-            Toast.makeText(this, R.string.message_no_connectivity, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.message_no_connectivity,
+                    Toast.LENGTH_LONG).show();
         }
     }
 
     private void createBottomNavigationView() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.navigation);
-
         bottomNavigationView.setOnNavigationItemSelectedListener
                 (new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                         Fragment selectedFragment = null;
 
                         switch (item.getItemId()) {
-
                             case R.id.sort_by__favorites_movies:
                                 selectedFragment = FavoriteMoviesFragment.newInstance();
                                 getMovies(getString(R.string.main_activity_sortBy_favorites_movies));
@@ -102,19 +101,23 @@ public class MainActivity extends AppCompatActivity {
     private void initMoviesGridView() {
         recyclerView = findViewById(R.id.recyclerView);
 
-        moviesAdapter = new MoviesAdapter(this, movieList);
+        RecyclerView.LayoutManager portraitLayoutManager = new GridLayoutManager(this, 2);
+        RecyclerView.LayoutManager landscapeLayoutManager = new GridLayoutManager(this, 4);
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            recyclerView.setLayoutManager(portraitLayoutManager);
         } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+            recyclerView.setLayoutManager(landscapeLayoutManager);
         }
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        moviesAdapter = new MoviesAdapter(this, movieList);
         recyclerView.setAdapter(moviesAdapter);
         moviesAdapter.notifyDataSetChanged();
 
         getMovies(getString(R.string.main_activity_sortBy_popular_movies));
+
     }
 
     private void getMovies(String sortBy) {
@@ -150,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
                         recyclerView.setAdapter(
                                 new MoviesAdapter(getApplicationContext(), movieList));
-                        recyclerView.smoothScrollToPosition(0);
                     }
 
                     @Override
@@ -186,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("unchecked")
-    public void showAllFavorites() {
+    private void showAllFavorites() {
         String[] projection = {
                 MovieContract.MovieEntry._ID,
                 MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         String sortOrder =
                 MovieContract.MovieEntry._ID + " ASC";
 
-        cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
                 projection,
                 null,
                 null,
@@ -209,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                movie = new Movie(
+                Movie movie = new Movie(
                         cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID)),
                         cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH)),
                         cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW)),

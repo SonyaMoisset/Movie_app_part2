@@ -1,5 +1,6 @@
 package com.sonyamoisset.android.movieapp.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,6 @@ import java.util.List;
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder> {
     private final List<Review> reviewList;
 
-    public ReviewsAdapter(List<Review> reviewList) {
-        this.reviewList = reviewList;
-    }
-
     class ReviewViewHolder extends RecyclerView.ViewHolder {
         private final TextView movieReviewAuthor;
         private final TextView movieReviewContent;
@@ -29,8 +26,14 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
         }
     }
 
+    public ReviewsAdapter(List<Review> reviewList) {
+        this.reviewList = reviewList;
+    }
+
+    @NonNull
     @Override
-    public ReviewsAdapter.ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+    public ReviewsAdapter.ReviewViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                              int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.review_list_items, viewGroup, false);
 
@@ -38,7 +41,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
     }
 
     @Override
-    public void onBindViewHolder(ReviewsAdapter.ReviewViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReviewsAdapter.ReviewViewHolder holder,
+                                 int position) {
         String reviewAuthor = reviewList.get(position).getAuthor();
         String reviewContent = reviewList.get(position).getContent();
 

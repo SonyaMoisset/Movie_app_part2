@@ -4,14 +4,17 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sonyamoisset.android.movieapp.R;
 import com.sonyamoisset.android.movieapp.model.Trailer;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -19,17 +22,14 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     private final Context context;
     private final List<Trailer> trailerList;
 
-    public TrailersAdapter(Context context, List<Trailer> trailerList) {
-        this.context = context;
-        this.trailerList = trailerList;
-    }
-
     class TrailerViewHolder extends RecyclerView.ViewHolder {
         private final TextView movieTrailerName;
+        private final ImageView movieTrailerThumbnail;
 
         private TrailerViewHolder(View view) {
             super(view);
             movieTrailerName = view.findViewById(R.id.movie_trailer_name);
+            movieTrailerThumbnail = view.findViewById(R.id.movie_trailer_thumbnail);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -40,18 +40,22 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
                         String trailer_id = trailerList.get(position).getKey();
 
                         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(context.getString(R.string.youtube_web_intent) + trailer_id));
+                                Uri.parse(context.getString(R.string.youtube_web_intent) +
+                                        trailer_id));
                         Intent appIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(context.getString(R.string.youtube_app_intent) + trailer_id));
+                                Uri.parse(context.getString(R.string.youtube_app_intent) +
+                                        trailer_id));
 
                         try {
                             appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            appIntent.putExtra(context.getString(R.string.TRAILER_ID_KEY), trailer_id);
+                            appIntent.putExtra(context.getString(R.string.TRAILER_ID_KEY),
+                                    trailer_id);
 
                             context.startActivity(appIntent);
                         } catch (ActivityNotFoundException ex) {
                             webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            webIntent.putExtra(context.getString(R.string.TRAILER_ID_KEY), trailer_id);
+                            webIntent.putExtra(context.getString(R.string.TRAILER_ID_KEY),
+                                    trailer_id);
 
                             context.startActivity(webIntent);
                         }
@@ -61,8 +65,15 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         }
     }
 
+    public TrailersAdapter(Context context, List<Trailer> trailerList) {
+        this.context = context;
+        this.trailerList = trailerList;
+    }
+
+    @NonNull
     @Override
-    public TrailersAdapter.TrailerViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+    public TrailersAdapter.TrailerViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                                int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.trailer_list_items, viewGroup, false);
 
@@ -70,8 +81,17 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     }
 
     @Override
-    public void onBindViewHolder(TrailersAdapter.TrailerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TrailerViewHolder holder,
+                                 int position) {
         String trailerName = trailerList.get(position).getName();
+        String trailerThumbnail = context.getString(R.string.trailer_thumbnail_URL_part_one) +
+                trailerList.get(position).getKey() +
+                context.getString(R.string.trailer_thumbnail_URL_part_two);
+
+        Picasso.with(context)
+                .load(trailerThumbnail)
+                .placeholder(R.color.colorSecondary)
+                .into(holder.movieTrailerThumbnail);
 
         holder.movieTrailerName.setText(trailerName);
     }

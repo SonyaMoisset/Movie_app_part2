@@ -14,12 +14,14 @@
     <string name="activity_detail_synopsis">Synopsis</string>
     <string name="activity_detail_trailer">Trailers</string>
     <string name="activity_detail_review">Reviews</string>
+    <string name="activity_detail_favorite">Favorite</string>
+    <string name="activity_detail_movie_added_to_favorites">Movie added to favorites</string>
+    <string name="activity_detail_movie_removed_to_favorites">Movie removed from favorites</string>
 
     <string name="main_activity_sortBy_favorites_movies">favorites_movies</string>
     <string name="main_activity_sortBy_popular_movies">popular_movies</string>
     <string name="main_activity_sortBy_top_rated_movies">top_rated_movies</string>
 
-    <string name="message_obtain_api_key">Please obtain your API key from TheMovieDB website</string>
     <string name="message_no_connectivity">There is no connectivity. Please turn on your WI-FI</string>
 
     <string name="youtube_web_intent">https://www.youtube.com/watch?v=</string>
@@ -27,5 +29,8 @@
 
     <string name="TRAILER_ID_KEY">trailer</string>
     <string name="MOVIE_KEY">movie</string>
-    <string name="no_movies_liked">No movies liked</string>
+
+    <string name="trailer_thumbnail_image">Thumbnail Movie</string>
+    <string name="trailer_thumbnail_URL_part_one">http://img.youtube.com/vi/</string>
+    <string name="trailer_thumbnail_URL_part_two">/mqdefault.jpg</string>
 </resources>

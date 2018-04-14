@@ -2,6 +2,7 @@ package com.sonyamoisset.android.movieapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,6 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final Context context;
     private final List<Movie> movieList;
-
-    public MoviesAdapter(Context context, List<Movie> movieList) {
-        this.context = context;
-        this.movieList = movieList;
-    }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
         private final ImageView moviePoster;
@@ -51,8 +47,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
     }
 
+    public MoviesAdapter(Context context, List<Movie> movieList) {
+        this.context = context;
+        this.movieList = movieList;
+    }
+
+    @NonNull
     @Override
-    public MoviesAdapter.MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+    public MoviesAdapter.MovieViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                            int position) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.movie_list_items, viewGroup, false);
 
@@ -60,7 +63,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     @Override
-    public void onBindViewHolder(MoviesAdapter.MovieViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MoviesAdapter.MovieViewHolder holder,
+                                 int position) {
         String poster = Constants.MOVIE_POSTER_PATH + movieList.get(position).getPosterPath();
 
         Picasso.with(context)

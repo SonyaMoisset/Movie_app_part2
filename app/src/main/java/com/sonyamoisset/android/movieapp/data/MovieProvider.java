@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Objects;
+
 import static com.sonyamoisset.android.movieapp.data.MovieContract.MovieEntry.TABLE_NAME;
 
 public class MovieProvider extends ContentProvider {
@@ -74,7 +76,7 @@ public class MovieProvider extends ContentProvider {
                 throw new android.database.SQLException("Unknown uri: " + uri);
         }
 
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        retCursor.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(), uri);
 
         return retCursor;
     }
@@ -107,7 +109,7 @@ public class MovieProvider extends ContentProvider {
                 throw new android.database.SQLException("Unknown uri: " + uri);
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri, null);
 
         return returnUri;
     }
@@ -145,7 +147,7 @@ public class MovieProvider extends ContentProvider {
         }
 
         if (movieDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri, null);
         }
 
         return movieDeleted;

@@ -43,25 +43,27 @@ import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.movie_poster)
-    ImageView moviePoster;
+    protected ImageView moviePoster;
     @BindView(R.id.movie_backdrop_path)
-    ImageView movieBackdropPath;
+    protected ImageView movieBackdropPath;
     @BindView(R.id.movie_original_title)
-    TextView movieName;
+    protected TextView movieName;
     @BindView(R.id.movie_overview)
-    TextView moviePlot;
+    protected TextView moviePlot;
     @BindView(R.id.movie_vote_average)
-    TextView movieVoteAverage;
+    protected TextView movieVoteAverage;
     @BindView(R.id.movie_release_date)
-    TextView movieReleaseDate;
+    protected TextView movieReleaseDate;
     @BindView(R.id.favorite)
-    Button favorite;
+    protected Button favorite;
 
     public RecyclerView trailerRecyclerView;
     public RecyclerView reviewRecyclerView;
-    Movie movie;
-    Cursor cursor;
+    private Movie movie;
+    private Cursor cursor;
     private int movie_id;
+    private ReviewsAdapter reviewsAdapter;
+    private TrailersAdapter trailersAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (checkFavorites()) {
                     deleteFromFavorites();
+
                 } else {
                     addToFavorites();
                 }
@@ -132,7 +135,8 @@ public class DetailActivity extends AppCompatActivity {
 
         resolver.insert(uri, values);
 
-        Toast.makeText(getApplicationContext(), "Movie added to favorites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.activity_detail_movie_added_to_favorites,
+                Toast.LENGTH_SHORT).show();
     }
 
     private void deleteFromFavorites() {
@@ -143,7 +147,8 @@ public class DetailActivity extends AppCompatActivity {
 
         resolver.delete(uri, selection, selectionArgs);
 
-        Toast.makeText(getApplicationContext(), "Movie removed from favorites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.activity_detail_movie_removed_to_favorites,
+                Toast.LENGTH_SHORT).show();
     }
 
     private boolean checkFavorites() {
@@ -198,10 +203,14 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<TrailersResult> call,
                                            @NonNull Response<TrailersResult> response) {
-                        List<Trailer> trailers = response.body().getListOfTrailers();
-                        trailerRecyclerView.setAdapter(
-                                new TrailersAdapter(getApplicationContext(), trailers));
-                        trailerRecyclerView.smoothScrollToPosition(0);
+                        TrailersResult trailersResult = response.body();
+
+                        if (trailersResult != null && trailersResult.getListOfTrailers() != null) {
+                            List<Trailer> trailers = trailersResult.getListOfTrailers();
+
+                            trailersAdapter = new TrailersAdapter(getApplicationContext(), trailers);
+                            trailerRecyclerView.setAdapter(trailersAdapter);
+                        }
                     }
 
                     @Override
@@ -229,10 +238,14 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<ReviewsResult> call,
                                            @NonNull Response<ReviewsResult> response) {
-                        List<Review> reviews = response.body().getListOfReviews();
-                        reviewRecyclerView.setAdapter(
-                                new ReviewsAdapter(reviews));
-                        reviewRecyclerView.smoothScrollToPosition(0);
+                        ReviewsResult reviewsResult = response.body();
+
+                        if (reviewsResult != null && reviewsResult.getListOfReviews() != null) {
+                            List<Review> reviews = reviewsResult.getListOfReviews();
+
+                            reviewsAdapter = new ReviewsAdapter(reviews);
+                            reviewRecyclerView.setAdapter(reviewsAdapter);
+                        }
                     }
 
                     @Override
