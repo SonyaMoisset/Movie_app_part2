@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar">
-        <activity android:name=".ui.activity.MainActivity">
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -22,6 +24,7 @@
 
         <activity
             android:name=".ui.activity.DetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Movies"
             android:parentActivityName=".ui.activity.MainActivity"
             android:theme="@style/AppTheme">
