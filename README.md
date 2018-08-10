@@ -6,13 +6,13 @@ An app that allows users to discover popular and top rated movies.
 - On MainActivity, movies are displayed in a grid layout
 - On MainActivity, the user can filter by popular, top rated or favorites
 
-![Homepage](https://github.com/SonyaMoisset/MovieApp_AND/blob/master/homepage.png)
+<img width="350" src="https://github.com/SonyaMoisset/MovieApp_AND/blob/master/homepage.png">
 
 - On DetailActivity, the title, poster, release data, rating and sypnosis are visible
 - On DetailActivity, the trailers and reviews are visible
 - On DetailActivity, the user can favorite a movie
 
-![Homepage](https://github.com/SonyaMoisset/MovieApp_AND/blob/master/detailpage.png)
+<img width="350" src="https://github.com/SonyaMoisset/MovieApp_AND/blob/master/detailpage.png">
 
 ## Libraries
 - ButterKnife
